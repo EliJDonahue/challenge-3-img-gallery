@@ -79,3 +79,47 @@ const retrieveImages = async function (source, options) {
         httpRequest.send();
     });
 }
+const createColumns = function (cols) {
+    let container = document.getElementById('gallery-row');
+    for (let i = 0; i < cols; i++) {
+        let col = document.createElement('div');
+        col.id = `col-${i}`;
+        col.classList = 'column';
+        container.appendChild(col);
+    }
+};
+
+const displayImage = function (img, colNum) {
+    if (img.url.indexOf('.mp4') > 0) {
+        // skip it, we aren't showing videos
+        return false;
+    }
+
+    // create image tag to add to document
+    let img_tag = document.createElement('img');
+    img_tag.src = img.fileurl;
+    img_tag.id = img.id;
+    img_tag.style.width = '100%';
+
+    // add click event to show the selected image in a modal dialog
+    img_tag.addEventListener('click', function (e) {  
+        let selected_id = e.target.id;
+        let selected_obj = document.myImages.find(function (element) {
+            return element.id === selected_id;
+        });
+    
+        // set modal content
+        let title_el = document.getElementById('selected-title');
+        let body_el = document.getElementById('selected-body-img');
+        title_el.innerHTML = selected_obj.title;
+        body_el.src = selected_obj.fileurl;
+
+        // call bootstrap modal dialog
+        $('#img-modal').modal('show');
+    });
+
+    // add image to the doc
+    let col = document.getElementById(`col-${colNum}`);
+    col.appendChild(img_tag);
+    return true;
+};
