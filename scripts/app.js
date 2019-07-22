@@ -19,7 +19,7 @@ require([
     };
 
     // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);    
+    firebase.initializeApp(firebaseConfig);
 
     const IMGUR_OPTIONS = {
         SECTION: 'top',
@@ -83,7 +83,7 @@ require([
                 }
                 else if (httpRequest.readyState == 4) {
                     // reject the promise and return an error
-                    reject(new Error(httpRequest.status + " (" + httpRequest.statusText + ") from " + url));
+                    reject(new Error(httpRequest.status + " (" + httpRequest.statusText + ") from " + source));
                 }
             };
 
@@ -104,45 +104,51 @@ require([
     }
 
     const loadGallery = async function () {
-        // get data
-        document.myImages = [];
-        let myImages = [];
-        let result = await retrieveImages('Imgur', IMGUR_OPTIONS);
-        result = JSON.parse(result).data;
+        try {
+            // get data
+            document.myImages = [];
+            let myImages = [];
+            let result = await retrieveImages('Imgur', IMGUR_OPTIONS);
+            result = JSON.parse(result).data;
 
-        let numCols = 4;
-        let numImages = 0;
-        createColumns(numCols);
+            let numCols = 4;
+            let numImages = 0;
+            createColumns(numCols);
 
-        result.forEach(function (obj) {
-            let thisCol = numImages % numCols;
-            let imageAdded = false;
-            let img;
+            result.forEach(function (obj) {
+                let thisCol = numImages % numCols;
+                let imageAdded = false;
+                let img;
 
-            if (obj.is_album === false) {
-                // this object is a single image
-                img = new MyImage(obj, 'Imgur');
-                imageAdded = displayImage(img, thisCol);
-                if (imageAdded) {
-                    numImages++;
-                    myImages.push(img);
-                }
-
-            } else {
-                // otherwise, this object is an album of images
-                images = obj.images;
-                images.forEach(function (item) {
-                    img = new MyImage(item, 'Imgur');
+                if (obj.is_album === false) {
+                    // this object is a single image
+                    img = new MyImage(obj, 'Imgur');
                     imageAdded = displayImage(img, thisCol);
                     if (imageAdded) {
                         numImages++;
                         myImages.push(img);
                     }
-                });
-            }
-        });
 
-        document.myImages = myImages;
+                } else {
+                    // otherwise, this object is an album of images
+                    images = obj.images;
+                    images.forEach(function (item) {
+                        img = new MyImage(item, 'Imgur');
+                        imageAdded = displayImage(img, thisCol);
+                        if (imageAdded) {
+                            numImages++;
+                            myImages.push(img);
+                        }
+                    });
+                }
+            });
+
+            document.myImages = myImages;
+
+        } catch (err) {
+            console.log("Error: " + err.message);
+            alert("Error: " + err.message);
+        }
     };
 
     const createColumns = function (cols) {
@@ -190,5 +196,6 @@ require([
         return true;
     };
 
+    // init gallery
     loadGallery();
 });
