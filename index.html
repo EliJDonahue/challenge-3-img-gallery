@@ -1,63 +1,121 @@
 <!doctype html>
 <html lang="en">
-    <head>
-          <meta charset="utf-8">
-          <title>Lightweight Image Gallery</title>
-          <meta name="description" content="Image gallery">
-          <meta name="author" content="codecorgi">
-          <link rel="stylesheet" href="./css/normalize.css">
-          <link rel="stylesheet" href="./css/bootstrap.css">
-          <link rel="stylesheet" href="./css/app.css">
-          <link rel="shortcut icon" href="/favicon.png">
-           <!--[if lt IE 9]>
+
+<head>
+  <meta charset="utf-8">
+  <title>Lightweight Image Gallery</title>
+  <meta name="description" content="Image gallery">
+  <meta name="author" content="codecorgi">
+  <link rel="stylesheet" href="./css/normalize.css">
+  <link rel="stylesheet" href="./css/bootstrap.css">
+  <link rel="stylesheet" href="./css/app.css">
+  <link rel="shortcut icon" href="./favicon.png">
+  <!--[if lt IE 9]>
               <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script>
             <![endif]-->
-    </head>
-    <body>
-        <header>
-           <div class="navbar navbar-default navbar-fixed-top">
-              <div class="container">
-                <div class="navbar-header">
-                  <a href="./" class="navbar-brand">Light Image Gallery</a>
-                  <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-main">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                  </button>
-                </div>
-                <div class="navbar-collapse collapse" id="navbar-main">
-                  <ul class="nav navbar-nav navbar-right">
-                    <li>
-                      <a href="http://codecorgi.co">codecorgi</a>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-        </header>
-        <main>
-          <div class="jumbotron">
-            <div class="container">
-              <h1>Light Image Gallery</h1>
-              <p>Getting images from Imgur</p>
-            </div>
-          </div>
-          <section class="container images full-width">
-              <div class="row image">
-                  <h2><a href="http://imgur.com/gallery/7zMMi">The people behind the comics we see on the frontpage every day</a></h2>
-                  <div>
-                      <img src="https://i.imgur.com/YAoqrjz.jpg" alt="The people behind the comics we see on the frontpage every day" class="img-thumbnail">
-                  </div>
-              </div>
-              <div class="row image">
-                  <h2><a href="http://imgur.com/gallery/sc4nw">Weekend meme dump (50) - Mohstly fresh</a></h2>
-                  <div>
-                      <img src="https://i.imgur.com/nEIuGxy.png" alt="Weekend meme dump (50) - Mohstly fresh" class="img-thumbnail">
-                  </div>
-              </div>
-          </section>
-        </main>
-        <script src="./scripts/app.js"></script>
-    </body>
-</html>
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"
+    integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd"
+    crossorigin="anonymous"></script>
+</head>
+<style>
+  * {
+    box-sizing: border-box;
+  }
 
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0 4px;
+  }
+
+  /* Create four equal columns that sits next to each other */
+  .column {
+    flex: 25%;
+    max-width: 25%;
+    padding: 0 4px;
+  }
+
+  .column img {
+    margin-top: 8px;
+    vertical-align: middle;
+    cursor: pointer;
+  }
+
+  .column img:hover {
+    border: 1px solid yellow;
+  }
+
+  /* Responsive layout - makes a two column-layout instead of four columns */
+  @media (max-width: 800px) {
+    .column {
+      flex: 50%;
+      max-width: 50%;
+    }
+  }
+
+  /* Responsive layout - makes the two columns stack on top of each other instead of next to each other */
+  @media (max-width: 600px) {
+    .column {
+      flex: 100%;
+      max-width: 100%;
+    }
+  }
+</style>
+<body>
+  <header>
+    <div class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <a href="./" class="navbar-brand">Light Image Gallery</a>
+          <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-main">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+        </div>
+        <div class="navbar-collapse collapse" id="navbar-main">
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="http://codecorgi.co">codecorgi</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </header>
+  <main>
+    <div class="jumbotron">
+      <div class="container">
+        <h1>Light Image Gallery</h1>
+        <p>Getting images from Imgur</p>
+      </div>
+    </div>
+    <section id="gallery" class="container images full-width">
+      <div id="gallery-row" class="row image"></div>
+      <div id="img-modal" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                  aria-hidden="true">&times;</span></button>
+              <h4 id="selected-title" class="modal-title">Modal title</h4>
+            </div>
+            <div id="selected-body" class="modal-body">
+              <img id="selected-body-img" src="" style="width: 100%" />
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+          </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+      </div><!-- /.modal -->
+    </section>
+  </main>
+  <script src="./scripts/require.js"></script>
+  <script src="./scripts/env.js"></script>
+  <script src="./scripts/app.js"></script>
+</body>
+</html>

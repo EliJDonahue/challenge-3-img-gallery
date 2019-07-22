@@ -1,0 +1,12 @@
+
+\.env
+
+scripts/env\.js
+
+deploy/
+
+\.firebase/
+
+\.firebaserc
+
+firebase\.json
