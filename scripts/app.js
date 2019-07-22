@@ -46,4 +46,36 @@ class MyImage {
     }
 }
 
+// get the image data from the specified source
+const retrieveImages = async function (source, options) {
+    var httpRequest = new XMLHttpRequest();
+    
+    return new Promise(function (resolve, reject) {
+        // resolve or reject the promise when the response comes back
+        httpRequest.onreadystatechange = function () {
+            if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+                // resolve the promise and return the response text
+                resolve(httpRequest.response);
+
+            }
+            else if (httpRequest.readyState == 4) {
+                // reject the promise and return an error
+                reject(new Error(httpRequest.status + " (" + httpRequest.statusText + ") from " + url));
+            }
+        };
+
+        switch (source) {
+            case "Imgur":
+                httpRequest.open('GET', `https://api.imgur.com/3/gallery/${options.SECTION}/${options.SORT}/${options.WINDOW}/${options.PAGE}?showViral=${options.SHOW_VIRAL}&mature=${options.SHOW_MATURE}&album_previews=${options.ALBUM_PREVIEWS}`, true);
+                // Note: ENV object is loaded from env.js, 
+                // a .gitignored file I'm using as a temporary solution for environment variables
+                httpRequest.setRequestHeader('Authorization', `Client-ID ${ENV.IMGUR_KEY}`);
+                break;
+
+            default:
+                throw `Data source '${source}' has not been implemented for retrieveImages().`;
+        }
+
+        httpRequest.send();
+    });
 }
