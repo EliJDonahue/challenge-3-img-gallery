@@ -1,4 +1,13 @@
-console.log('hello world!');
+const IMGUR_OPTIONS = {
+    SECTION: 'top',
+    SORT: 'viral',
+    PAGE: '1',
+    WINDOW: 'week',
+    SHOW_MATURE: 'false',
+    SHOW_VIRAL: 'true',
+    ALBUM_PREVIEWS: 'true'
+};
+
 // instances of this class represent an image from a source API
 class MyImage {
     constructor(obj, source) {
