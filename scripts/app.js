@@ -79,6 +79,49 @@ const retrieveImages = async function (source, options) {
         httpRequest.send();
     });
 }
+
+const loadGallery = async function () {
+    // get data
+    document.myImages = [];
+    let myImages = [];
+    let result = await retrieveImages('Imgur', IMGUR_OPTIONS);
+    result = JSON.parse(result).data;
+
+    let numCols = 4;
+    let numImages = 0;
+    createColumns(numCols);
+
+    result.forEach(function (obj) {
+        let thisCol = numImages % numCols;
+        let imageAdded = false;
+        let img;
+
+        if (obj.is_album === false) {
+            // this object is a single image
+            img = new MyImage(obj, 'Imgur');
+            imageAdded = displayImage(img, thisCol);
+            if (imageAdded) {
+                numImages++;
+                myImages.push(img);
+            }
+
+        } else {
+            // otherwise, this object is an album of images
+            images = obj.images;
+            images.forEach(function (item) {
+                img = new MyImage(item, 'Imgur');
+                imageAdded = displayImage(img, thisCol);
+                if (imageAdded) {
+                    numImages++;
+                    myImages.push(img);
+                }
+            });
+        }
+    });
+
+    document.myImages = myImages;
+};
+
 const createColumns = function (cols) {
     let container = document.getElementById('gallery-row');
     for (let i = 0; i < cols; i++) {
@@ -123,3 +166,5 @@ const displayImage = function (img, colNum) {
     col.appendChild(img_tag);
     return true;
 };
+
+loadGallery();
