@@ -96,6 +96,11 @@ require([
 
         let request = new Request(url, myInit);
         let response = await fetch(request);
+
+        if (!response.ok) {
+            throw new Error(`Network error occurred while fetching ${url}`);
+        }
+
         let data = await response.json();
         
         return data;
