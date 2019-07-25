@@ -107,51 +107,45 @@ require([
     }
 
     const loadGallery = async function () {
-        try {
-            // get data
-            document.myImages = [];
-            let myImages = [];
-            let result = await retrieveImages('Imgur', IMGUR_OPTIONS);
-            result = result.data;
+        // get data
+        document.myImages = [];
+        let myImages = [];
+        let result = await retrieveImages('Imgur', IMGUR_OPTIONS);
+        result = result.data;
 
-            let numCols = 4;
-            let numImages = 0;
-            createColumns(numCols);
+        let numCols = 4;
+        let numImages = 0;
+        createColumns(numCols);
 
-            result.forEach(function (obj) {
-                let thisCol = numImages % numCols;
-                let imageAdded = false;
-                let img;
+        result.forEach(function (obj) {
+            let thisCol = numImages % numCols;
+            let imageAdded = false;
+            let img;
 
-                if (obj.is_album === false) {
-                    // this object is a single image
-                    img = new MyImage(obj, 'Imgur');
+            if (obj.is_album === false) {
+                // this object is a single image
+                img = new MyImage(obj, 'Imgur');
+                imageAdded = displayImage(img, thisCol);
+                if (imageAdded) {
+                    numImages++;
+                    myImages.push(img);
+                }
+
+            } else {
+                // otherwise, this object is an album of images
+                images = obj.images;
+                images.forEach(function (item) {
+                    img = new MyImage(item, 'Imgur');
                     imageAdded = displayImage(img, thisCol);
                     if (imageAdded) {
                         numImages++;
                         myImages.push(img);
                     }
+                });
+            }
+        });
 
-                } else {
-                    // otherwise, this object is an album of images
-                    images = obj.images;
-                    images.forEach(function (item) {
-                        img = new MyImage(item, 'Imgur');
-                        imageAdded = displayImage(img, thisCol);
-                        if (imageAdded) {
-                            numImages++;
-                            myImages.push(img);
-                        }
-                    });
-                }
-            });
-
-            document.myImages = myImages;
-
-        } catch (err) {
-            console.log("Error: " + err.message);
-            alert("Error: " + err.message);
-        }
+        document.myImages = myImages;
     };
 
     const createColumns = function (cols) {
@@ -200,5 +194,8 @@ require([
     };
 
     // init gallery
-    loadGallery();
+    loadGallery().catch(function() {
+        alert(`Couldn't load gallery. Error occurred: '${error.message}'`);
+        console.log(`Couldn't load gallery. Error occurred: '${error.message}'`);
+    });
 });
