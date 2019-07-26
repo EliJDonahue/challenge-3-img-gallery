@@ -74,7 +74,7 @@ require([
 
         let url;
         let headers = new Headers();
-        
+
         switch (source) {
             case "Imgur":
                 url = `https://api.imgur.com/3/gallery/${options.SECTION}/${options.SORT}/${options.WINDOW}/${options.PAGE}?showViral=${options.SHOW_VIRAL}&mature=${options.SHOW_MATURE}&album_previews=${options.ALBUM_PREVIEWS}`;
@@ -86,12 +86,12 @@ require([
             default:
                 throw `Data source '${source}' has not been implemented for retrieveImages().`;
         }
-        
-        let myInit = { 
+
+        let myInit = {
             method: 'GET',
             headers: headers,
             mode: 'cors',
-            cache: 'default' 
+            cache: 'default'
         };
 
         let request = new Request(url, myInit);
@@ -102,9 +102,9 @@ require([
         }
 
         let data = await response.json();
-        
+
         return data;
-    }
+    };
 
     const loadGallery = async function () {
         // get data
@@ -194,7 +194,7 @@ require([
     };
 
     // init gallery
-    loadGallery().catch(function() {
+    loadGallery().catch(function () {
         alert(`Couldn't load gallery. Error occurred: '${error.message}'`);
         console.log(`Couldn't load gallery. Error occurred: '${error.message}'`);
     });
